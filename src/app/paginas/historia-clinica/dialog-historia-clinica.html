@@ -1,0 +1,151 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Historia clínica</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-stepper linear #stepper>
+            <mat-step>
+                <ng-template matStepLabel>Datos paciente</ng-template>
+                <mat-grid-list cols="3" rowHeight="80px">
+                    <mat-grid-tile colspan="3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nombre completo</mat-label>
+                            <input matInput type="nombre">
+                            <mat-icon matSuffix>person</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Cédula</mat-label>
+                            <input matInput type="nombre">
+                            <mat-icon matSuffix>badge</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Fecha nacimiento</mat-label>
+                            <input matInput [matDatepicker]="picker">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                          </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Teléfono</mat-label>
+                            <input matInput type="nombre">
+                            <mat-icon matSuffix>call</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Sede</mat-label>
+                            <mat-select>
+                                <mat-option value="option">Sede 1</mat-option>
+                                <mat-option value="option">Sede 2</mat-option>
+                            </mat-select>
+                            <mat-icon matSuffix>business</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Correo electrónico</mat-label>
+                            <input matInput type="email" placeholder="ejemplo@mail.com">
+                            <mat-icon matSuffix>email</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Lateralidad</mat-label>
+                            <mat-select>
+                                <mat-option value="option">Diestro</mat-option>
+                                <mat-option value="option">Surdo</mat-option>
+                                <mat-option value="option">Ambidiestro</mat-option>
+                            </mat-select>
+                            <mat-icon matSuffix>pan_tool</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Profesión</mat-label>
+                            <input matInput type="confirmPassword" placeholder="**********">
+                            <mat-icon matSuffix>home_repair_service</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Ocupacion</mat-label>
+                            <input matInput type="confirmPassword" placeholder="**********">
+                            <mat-icon matSuffix>engineering</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile colspan="3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Domicilio</mat-label>
+                            <input matInput type="nombre">
+                            <mat-icon matSuffix>location_pin</mat-icon>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-step>
+            <mat-step >
+                <ng-template matStepLabel>Antecedentes</ng-template>
+                <div class="scroll"> 
+                    <mat-grid-list cols="2" rowHeight="90px">
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Fuente del relato</mat-label>
+                                <input matInput type="nombre">
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Antecedentes familiares</mat-label>
+                                <textarea  matInput></textarea>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Antecedentes patológicos personales (clínicos y traumatologicos)</mat-label>
+                                <textarea  matInput></textarea>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Hábitos</mat-label>
+                                <textarea  matInput></textarea>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Vivienda</mat-label>
+                                <textarea  matInput></textarea>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Antecedentes sobre uso de medicamentos</mat-label>
+                                <textarea  matInput></textarea>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Alergias</mat-label>
+                                <input matInput>
+                            </mat-form-field>
+                        </mat-grid-tile>
+                        <mat-grid-tile colspan="2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Actividad física/Deporte</mat-label>
+                                <input matInput >
+                            </mat-form-field>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                </div>
+            </mat-step>
+          </mat-stepper>
+          <button mat-raised-button color="primary">Guardar</button>
+    </mat-card-content>
+        
+</mat-card>
+
+
