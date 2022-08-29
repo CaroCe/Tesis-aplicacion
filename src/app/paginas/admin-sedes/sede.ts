@@ -1,9 +1,9 @@
 export interface Sede{
-    id: number;
-    nombre: string;
-    ubicacion: string;
-    telefono:   string;
-    horarioInicio: string;
-    horarioFin: string;
-    estado: boolean;
+    sedeId?:             number;
+    sedeNombre:         string;
+    sedeDireccion:      string;
+    sedeTelefono:           string;
+    horarioInicio?:      string;
+    horarioFin?:         string;
+    estado?:             boolean;
 }
