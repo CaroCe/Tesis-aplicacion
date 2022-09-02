@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersComponent } from './users.component';
 import { usersRoutes } from './users.routing';
@@ -18,6 +18,8 @@ import { UsuariosService } from './users.service';
     FormsModule,
     Material
   ],
-  providers:[UsuariosService]
+  providers:[
+    UsuariosService
+  ]
 })
 export class UsersModule { }

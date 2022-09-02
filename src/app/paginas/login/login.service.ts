@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpHeaders, HttpClient, HttpParams} from '@angular/common/http';
 import { Login } from './login.interface';
 import { environment } from 'src/environments/environment';
+import { EntRegistro} from './user.types';
 const headersOauth = {
   headers: new HttpHeaders()
     .append('Content-Type', 'application/x-www-form-urlencoded')
@@ -16,10 +17,9 @@ export class LoginService {
   }
 
   getLogin(user: Login) {
-    const body = new HttpParams()
-      .set('grant_type', 'password')
-      .set('username', user.email)
-      .set('password', user.password);
-    return this.http.post<any>(environment.apiUrl + 'oauth/token', body, headersOauth);
+    return this.http.get<any>(environment.apiUrl + 'api/Usuarios/Entrar/'+user.email+'/'+user.password);
+  }
+  postRegistro(registro:EntRegistro){
+    return this.http.post( environment.apiUrl+'api/Usuarios/RegistroPaciente',registro);
   }
 }

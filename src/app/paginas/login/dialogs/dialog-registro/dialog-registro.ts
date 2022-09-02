@@ -15,6 +15,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
     onSubmit(data: any) {
     }
+    regresarLogin(){
+      this.dialogRef.close();
+    }
   
     onNoClick(): void {
       this.dialogRef.close();

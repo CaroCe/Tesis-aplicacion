@@ -51,42 +51,43 @@
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Nombre completo</mat-label>
-                  <input matInput type="nombre" placeholder="ejemplo@mail.com" formControlName="email">
+                  <input matInput type="nombre" placeholder="" formControlName="nombre">
                   <mat-icon matSuffix>person</mat-icon>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Cédula</mat-label>
-                  <input matInput type="nombre" placeholder="ejemplo@mail.com" formControlName="email">
+                  <input matInput type="nombre" placeholder="" formControlName="cedula">
                   <mat-icon matSuffix>badge</mat-icon>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="1">
                 <mat-form-field appearance="outline">
                   <mat-label>Fecha nacimiento</mat-label>
-                  <input matInput type="nombre" placeholder="ejemplo@mail.com" formControlName="email">
-                  <mat-icon matSuffix>event</mat-icon>
+                  <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Teléfono</mat-label>
-                  <input matInput type="nombre" placeholder="ejemplo@mail.com" formControlName="email">
+                  <input matInput type="nombre" placeholder="" formControlName="telefono">
                   <mat-icon matSuffix>call</mat-icon>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Domicilio</mat-label>
-                  <input matInput type="nombre" placeholder="ejemplo@mail.com" formControlName="email">
+                  <input matInput type="nombre" placeholder="" formControlName="domicilio">
                   <mat-icon matSuffix>location_pin</mat-icon>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <mat-form-field appearance="outline">
                   <mat-label>Correo electrónico</mat-label>
-                  <input matInput type="email" placeholder="ejemplo@mail.com" formControlName="email">
+                  <input matInput type="email" placeholder="" formControlName="email">
                   <mat-icon matSuffix>email</mat-icon>
                 </mat-form-field>
               </mat-grid-tile>

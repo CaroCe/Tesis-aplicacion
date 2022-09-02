@@ -4,3 +4,13 @@ export interface User
     name: string;
     email: string;
 }
+export interface EntRegistro {
+    id:              number;
+    nombre?:          string;
+    cedula?:          string;
+    fechaNacimiento?:    Date;
+    telefono?:        string;
+    domicilio?:       string;
+    email?:           string;
+    password?:        string;
+}

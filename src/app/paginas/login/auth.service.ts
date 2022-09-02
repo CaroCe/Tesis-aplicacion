@@ -20,12 +20,12 @@ export class AuthService {
     private _userService: UserService
   ) {
   }
-  set accessToken(token: string) {
-    localStorage.setItem('accessToken', token);
+  set userId(id: number) {
+    Number(localStorage.setItem('userId', id.toString()));
   }
 
-  get accessToken(): string {
-    return localStorage.getItem('accessToken') ?? '';
+  get userId(): number {
+    return Number(localStorage.getItem('userId') ?? 0);
   }
 
   
@@ -35,15 +35,13 @@ export class AuthService {
       return throwError('User is already logged in.');
     }
 
-    return this._httpClient.get(environment.apiUrl+'login/'+credentials.email + '/' + credentials.password).pipe(
+    return this._httpClient.get(environment.apiUrl+'api/Usuarios/Entrar/'+credentials.email + '/' + credentials.password).pipe(
       switchMap((response: any) => {
-
-        localStorage.setItem('userId', response.usuarioId);
-        localStorage.setItem('userName', response.usuarioNombre);
-        localStorage.setItem('userEmail', response.usuarioCorreo);
-        localStorage.setItem('userPass', credentials.password);
+        localStorage.setItem('userId', response.id);
+        localStorage.setItem('userName', response.nombre);
+        localStorage.setItem('userEmail', response.email);
+        localStorage.setItem('menu',JSON.stringify(response.menu));
         this._authenticated = true;
-
         return of(response);
       })
     );
@@ -54,51 +52,20 @@ export class AuthService {
    * Sign out
    */
   signOut(): Observable<any> {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userId');
 
     this._authenticated = false;
 
     return of(true);
-  }
-  signInUsingToken(): Observable<any>
-  {
-
-      return this._httpClient.post(environment.apiUrl+'oauth/token', {
-          accessToken: this.accessToken
-      }).pipe(
-          catchError(() =>
-
-              of(false)
-          ),
-          switchMap((response: any) => {
-
-              this.accessToken = response.accessToken;
-
-              this._authenticated = true;
-
-              this._userService.user = response.user;
-
-              return of(true);
-          })
-      );
   }
 
   check(): Observable<boolean> {
     if (this._authenticated) {
       return of(true);
     }
-    if (this.accessToken === '') {
+    if (this.userId === 0) {
       return of(false);
     }
-
     return of(true);
-    //return this.signInUsingToken();
   }
- /* getToken() :string{
-    if (!this.accessToken) {
-      return '';
-    }
-    const tokenDeserializado = JSON.parse(this.accessToken)
-    return tokenDeserializado.access_token;
-  }*/
 }
