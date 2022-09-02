@@ -14,7 +14,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
       private formBuilder: FormBuilder) {
         this.mensaje = data.mensaje;
     }
-    onSubmit(data: any) {
+    onSubmit() {
+      this.dialogRef.close();
     }
   
     onNoClick(): void {

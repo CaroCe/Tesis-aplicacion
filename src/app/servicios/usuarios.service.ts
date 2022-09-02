@@ -18,13 +18,14 @@ export class UsuariosService {
 
   constructor(private http: HttpClient) { }
 
-  getUsuarios():Observable<any>{
-
-    return this.http.get<any>(this.urlService,headerOauth)
+  getUsuarios():Observable<Usuario[]>{
+    return this.http.get<Usuario[]>(this.urlService,headerOauth)
   }
 
   postCrearUsuario(datos: Usuario):Observable<any>{
-
     return this.http.post<any>(this.urlService,datos,headerOauth)
   }
+  putUsuario(datos: Usuario,id: number):Observable<any>{
+    return this.http.put(this.urlService+'/'+id,datos,headerOauth); 
+  };
 }

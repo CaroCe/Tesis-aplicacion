@@ -9,37 +9,9 @@ import { Rol } from './rol';
 import { Sede } from '../admin-sedes/sede';
 import { MatTableDataSource } from '@angular/material/table';
 import { SedesService } from '../../servicios/sedes.service';
+import { DatePipe } from '@angular/common';
 
-/*const ELEMENT_DATA: Usuario[] = [
-  {
-    id: 1,
-    nombre: 'Carolina Cevallos',
-    cedula: '1718010653',
-    domicilio: 'Llano grande',
-    fechaNacimiento: new Date(1995, 3, 5),
-    ocupacion: 'Desarrollador',
-    profecion: 'Ingeniero software',
-    rolId: 1,
-    sedeId: 1,
-    sede: 'Norte',
-    telefono: '0983496205',
-    estado: true
-  },
-  {
-    id: 2,
-    nombre: 'Kevin Alomoto',
-    cedula: '1234567890',
-    domicilio: 'El Arenal',
-    fechaNacimiento: new Date(1994, 7, 12),
-    ocupacion: 'Futbolista',
-    profecion: 'Cultura fisica',
-    rolId: 2,
-    sedeId: 2,
-    sede: 'Sur',
-    telefono: '0995660670',
-    estado: false
-  },
-];*/
+
 
 @Component({
   selector: 'app-users',
@@ -51,8 +23,8 @@ export class UsersComponent implements OnInit{
   usuarioId: number = 0;
   usuarioForm: FormGroup;
   filtroForm: FormGroup;
-  displayedColumns: string[] = ['name', 'date', 'phone', 'sede', 'state'];
-  listaUsuarios = new MatTableDataSource<Usuario>;
+  displayedColumns: string[] = ['name', 'date', 'phone'];
+  listaUsuarios : Usuario[] =[];
   listaRoles: Rol[] = [];
   listaSedes: Sede[] = [];
   sedeFiltro = new FormControl(0)
@@ -75,6 +47,7 @@ export class UsersComponent implements OnInit{
       ocupacion : new FormControl(''),
       domicilio : new FormControl(''),
       profesion : new FormControl(''),
+      email: new FormControl(''),
       rolId : this.rolUsuario,
       sedeId : this.sedeUsuario,
     })
@@ -91,32 +64,54 @@ export class UsersComponent implements OnInit{
   }
   cargarTabla(){
     this._httpUsuarioService.getUsuarios().subscribe(resp => {
-      console.log(resp)
-      this.listaUsuarios=resp;
+    
+      for(let i=0;i<resp.length;i++){
+        let pipe = new DatePipe('en-US');
+        resp[i].fecha = pipe.transform(resp[i].usuarioFechaNacimiento, 'yyyy-MM-dd')?.toString()??'';
+      }
+      this.listaUsuarios =resp;
+
     })
   }
   nuevoUsuario(){
     this.usuarioForm.reset();
   }
   crearUsuario(){
-    console.log(this.usuarioForm)
+    
   }
 
-  editarUsuario(element: any) {
-    console.log(element);
+  editarUsuario(item:Usuario) {
+    
+    this.usuarioId = item.usuarioId;
+    this.usuarioForm.setValue({
+      nombre:item.usuarioNombre,
+      cedula:item.usuarioIdentificacion,
+      fechaNacimiento:item.usuarioFechaNacimiento,
+      telefono:item.usuarioTelefono,
+      ocupacion: item.usuarioOcupacion,
+      domicilio: item.usuarioDireccion,
+      profesion: item.usuarioProfesion,
+      email: item.usuarioCorreo,
+      rolId: item.rolId,
+      sedeId: item.sedeId
+    });
+
   }
+
+
 
   guardar(){
     if(this.usuarioId===0){
-      this.guardarNuevo
+      this.guardarNuevo();
     }else{
-      this.guardarEditado()
+      this.guardarEditado();
     }
   }
 
+
   guardarNuevo() {
-    console.log(this.usuarioForm)
     let usuario: Usuario={
+      usuarioId:0,
       usuarioNombre: this.usuarioForm.value.nombre,
       usuarioIdentificacion: this.usuarioForm.value.cedula,
       usuarioFechaNacimiento: this.usuarioForm.value.fechaNacimiento,
@@ -126,29 +121,50 @@ export class UsersComponent implements OnInit{
       usuarioProfesion: this.usuarioForm.value.profesion,
       rolId: this.usuarioForm.value.rolId,
       sedeId: this.usuarioForm.value.sedeId,
+      fecha: "",
+      lateralidadId:this.usuarioForm.value.lateralidadId,
+      usuarioCorreo:this.usuarioForm.value.email
     }
     this._httpUsuarioService.postCrearUsuario(usuario).subscribe(resp=> {
-      console.log(resp);
+      const dialogRef = this.dialog.open(DialogGeneral, {
+        width: '400px',
+        data: {
+          mensaje: 'Usuario creado exitosamente'
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+  
+      });
     })
-    /*const dialogRef = this.dialog.open(DialogGeneral, {
-      width: '400px',
-      data: {
-        mensaje: 'Usuario creado exitosamente'
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-
-    });*/
+    /**/
   }
   guardarEditado() {
-    const dialogRef = this.dialog.open(DialogGeneral, {
-      width: '400px',
-      data: {
-        mensaje: 'Usuario editado exitosamente'
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-
-    });
+    let usuario: Usuario={
+      usuarioId:this.usuarioId,
+      usuarioNombre: this.usuarioForm.value.nombre,
+      usuarioIdentificacion: this.usuarioForm.value.cedula,
+      usuarioFechaNacimiento: this.usuarioForm.value.fechaNacimiento,
+      usuarioTelefono: this.usuarioForm.value.telefono,
+      usuarioOcupacion: this.usuarioForm.value.ocupacion,
+      usuarioDireccion: this.usuarioForm.value.domicilio,
+      usuarioProfesion: this.usuarioForm.value.profesion,
+      usuarioCorreo:    this.usuarioForm.value.email,
+      rolId: this.usuarioForm.value.rolId,
+      sedeId: this.usuarioForm.value.sedeId,
+      fecha: "",
+      lateralidadId:this.usuarioForm.value.lateralidadId
+    }
+    this._httpUsuarioService.putUsuario(usuario,this.usuarioId).subscribe(resp=> {
+      const dialogRef = this.dialog.open(DialogGeneral, {
+        width: '400px',
+        data: {
+          mensaje: 'Usuario editado exitosamente'
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        this.cargarTabla();
+      });
+    })
+    
   }
 }

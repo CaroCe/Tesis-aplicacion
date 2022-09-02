@@ -11,7 +11,9 @@ import { ConsultasComponent } from './paginas/consultas/consultas.component';
 import { ForoComponent } from './paginas/foro/foro.component';
 import { HistoriaClinicaComponent } from './paginas/historia-clinica/historia-clinica.component';
 import { HorarioEspecialistaComponent } from './paginas/horario-especialista/horario-especialista.component';
+import { AuthGuard } from './paginas/login/auth.guard';
 import { LoginComponent } from './paginas/login/login.component';
+import { NoAuthGuard } from './paginas/login/noAuth.guard';
 import { NavComponent } from './paginas/nav/nav.component';
 import { SeguimientoComponent } from './paginas/seguimiento/seguimiento.component';
 import { TratamientoCasaComponent } from './paginas/tratamiento-casa/tratamiento-casa.component';
@@ -20,84 +22,105 @@ import { TratamientoComponent } from './paginas/tratamiento/tratamiento.componen
 const routes: Routes = [{
   path: 'login',
   component: LoginComponent,
-  //canActivate: [NoAuthGuard],
-  //canActivateChild: [NoAuthGuard]
+  canActivate: [NoAuthGuard],
+  canActivateChild: [NoAuthGuard]
 },
 {
   path: '',
   component: NavComponent,
-  //canActivate:[AuthGuard],
-  //canActivateChild: [AuthGuard],
+  canActivate:[AuthGuard],
+  canActivateChild: [AuthGuard],
   children: [
     {
-      path: 'administracion', children: [
+      path: 'administracion', 
+      children: [
         {
           path: 'usuarios', loadChildren: () => import('./paginas/users/users.module').then(m => m.UsersModule)
-        }
+        },
+        {
+          path: 'admin-sedes',
+          component: AdminSedesComponent
+        },
+        {
+          path: 'horario-especialista',
+          component: HorarioEspecialistaComponent
+        },
+        {
+          path: 'admin-ejercicios',
+          component: AdminEjerciciosComponent
+        },
       ]
     },
     {
-      path: 'foro',
-      component: ForoComponent
+      path:'foro',
+      children: [
+        {
+          path: 'admin-foro',
+          component: AdminForoComponent
+        },
+        {
+          path: 'foro',
+          component: ForoComponent
+        },
+      ]
     },
     {
-      path: 'admin-foro',
-      component: AdminForoComponent
+      path:'citas',
+      children:[
+        {
+          path: 'administracion-citas',
+          component: AdministracionCitasComponent
+        },
+        {
+          path: 'mis-citas',
+          component: MisCitasComponent
+        },
+        {
+          path: 'agendar-cita',
+          component: AgendarCitaComponent
+        },
+      ]
     },
     {
-      path: 'seguimiento',
-      component: SeguimientoComponent
+      path:'historia-clinica',
+      children: [
+        {
+          path: 'historia',
+          component: HistoriaClinicaComponent
+        },
+        {
+          path: 'buscar-consultas',
+          component: BuscarConsultaComponent
+        },
+        {
+          path: 'consultas',
+          component: ConsultasComponent
+        },
+      ]
     },
     {
-      path: 'tratamiento-casa',
-      component: TratamientoCasaComponent
-    },
-    {
-      path: 'tratamientos',
-      component: TratamientoComponent
-    },
-    {
-      path: 'buscar-consultas',
-      component: BuscarConsultaComponent
-    },
-    {
-      path: 'consultas',
-      component: ConsultasComponent
-    },
-    {
-      path: 'mis-citas',
-      component: MisCitasComponent
-    },
-    {
-      path: 'administracion-citas',
-      component: AdministracionCitasComponent
-    },
-    {
-      path: 'agendar-cita',
-      component: AgendarCitaComponent
-    },
-    {
-      path: 'admin-ejercicios',
-      component: AdminEjerciciosComponent
-    },
-    {
-      path: 'admin-sedes',
-      component: AdminSedesComponent
-    },
-    {
-      path: 'historia',
-      component: HistoriaClinicaComponent
-    },
-    {
-      path: 'horario-especialista',
-      component: HorarioEspecialistaComponent
+      path:'tratamientos',
+      children:[
+        {
+          path: 'seguimiento',
+          component: SeguimientoComponent
+        },
+        {
+          path: 'tratamiento-casa',
+          component: TratamientoCasaComponent
+        },
+        {
+          path: 'tratamientos',
+          component: TratamientoComponent
+        },
+      ]
     },
     {
       path: 'signed-in-redirect',
       pathMatch: 'full',
       redirectTo: ''
     },
-    { path: '', pathMatch: 'full', redirectTo: 'home' },
+    { path: '', pathMatch: 'full', redirectTo: '' },
   ]
 }];
 

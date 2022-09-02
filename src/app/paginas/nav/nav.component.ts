@@ -21,18 +21,7 @@ export class NavComponent implements OnInit {
   userEmail: string = '';
   userName: string = '';
   userPass: string = '';
-  menuItems: any[] = [
-    {
-      nombre:'Administracion',
-      subMenu:[
-        {
-          nombre:'Usuarios',
-          icon:'people',
-          url:'administracion/usuarios'
-        },
-      ]
-    }
-  ];
+  menuItems: any[] = [];
   imagen: string = environment.logoName;
   panelOpenState = false;
   email: any;
@@ -55,10 +44,7 @@ export class NavComponent implements OnInit {
     document.title = environment.tituloApp;
     this.userEmail = localStorage.getItem('userEmail')!;
     this.userName = localStorage.getItem('userName')!;
-
-    _httpPermisos.getPermisos(localStorage.getItem('userEmail')!,localStorage.getItem('userPass')!).subscribe(c => {
-      this.menuItems = c.menu;
-    })
+    this.menuItems = JSON.parse(localStorage.getItem('menu')??'');
   }
 
 

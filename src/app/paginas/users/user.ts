@@ -1,17 +1,16 @@
+
 export interface Usuario {
-    usuarioId?:                  number;
-    usuarioNombre:              string;
-    usuarioIdentificacion:      string;
-    usuarioFechaNacimiento:     Date;
-    usuarioTelefono:            string;
-    usuarioCorreo?:             string;
-    usuarioPassword?:           string;
-    usuarioOcupacion:           string;
-    usuarioDireccion:           string;
-    usuarioProfesion:           string;
-    lateralidadId?:             number;
-    rolId:                      number;
-    sedeId:                     number;
-    sede?:                       string;
-    estado?:                    boolean;
+    usuarioId:              number;
+    lateralidadId:          number;
+    rolId:                  number;
+    sedeId:                 number;
+    usuarioNombre:          string;
+    usuarioIdentificacion:  string;
+    usuarioFechaNacimiento: Date;
+    usuarioDireccion:       string;
+    usuarioTelefono:        string;
+    usuarioCorreo:          string;
+    usuarioOcupacion:       string;
+    usuarioProfesion:       string;
+    fecha:                  string;
 }

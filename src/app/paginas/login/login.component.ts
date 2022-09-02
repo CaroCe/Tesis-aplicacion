@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRegistro } from './dialogs/dialog-registro/dialog-registro';
+import { EntRegistro } from './user.types';
 
 
 
@@ -38,6 +39,11 @@ export class LoginComponent implements OnInit {
   );
   formReg = new FormGroup(
     {
+      nombre:new FormControl('',Validators.required),
+      cedula:new FormControl('',Validators.required),
+      fechaNacimiento:new FormControl(new Date,Validators.required),
+      telefono:new FormControl('',Validators.required),
+      domicilio:new FormControl('',Validators.required),
       email:new FormControl('',Validators.required),
       password:new FormControl('',Validators.required),
       confirmPassword:new FormControl('',Validators.required)
@@ -59,6 +65,18 @@ export class LoginComponent implements OnInit {
       email:['',Validators.required],
       password:['',Validators.required]
     });
+    this.formReg = new FormGroup(
+      {
+        nombre:new FormControl('',Validators.required),
+        cedula:new FormControl('',Validators.required),
+        fechaNacimiento:new FormControl(new Date,Validators.nullValidator),
+        telefono:new FormControl('',Validators.required),
+        domicilio:new FormControl('',Validators.required),
+        email:new FormControl('',Validators.required),
+        password:new FormControl('',Validators.required),
+        confirmPassword:new FormControl('',Validators.required)
+      }
+    );
   }
   reg(){
     this.loginForm = false;
@@ -108,11 +126,59 @@ export class LoginComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-     
+      this.formReg = new FormGroup(
+        {
+          nombre:new FormControl('',Validators.required),
+          cedula:new FormControl('',Validators.required),
+          fechaNacimiento:new FormControl(new Date,Validators.nullValidator),
+          telefono:new FormControl('',Validators.required),
+          domicilio:new FormControl('',Validators.required),
+          email:new FormControl('',Validators.required),
+          password:new FormControl('',Validators.required),
+          confirmPassword:new FormControl('',Validators.required)
+        }
+      );
+      this.log();
     });
   }
   registrar(){
-    this.abrirConfirmacionRegistro();
+    let itemRegistro:EntRegistro ={
+      nombre:this.formReg.value.nombre?.toString(),
+      cedula:this.formReg.value.cedula?.toString(),
+      domicilio:this.formReg.value.domicilio?.toString(),
+      email:this.formReg.value.email?.toString(),
+      telefono:this.formReg.value.telefono?.toString(),
+      fechaNacimiento: this.formReg.value.fechaNacimiento??undefined,
+      password:this.formReg.value.password?.toString(),
+      id:0
+    }
+    if(itemRegistro.nombre != ''
+    && itemRegistro.email != ''
+    && itemRegistro.cedula != ''
+    && itemRegistro.password != ''
+    && itemRegistro.domicilio != ''
+    ){
+      if(itemRegistro.password !== this.formReg.value.confirmPassword){
+        alert("La contraseña y la confirmación no son iguales");
+      }
+      else{
+        this.http.postRegistro(itemRegistro).subscribe(
+          c=>{
+            this.abrirConfirmacionRegistro();
+          },
+          error=>{
+            alert("Error al registrar usuario");
+          }
+          
+        );
+      }
+    }
+    else{
+      alert("Se debe completar todos los campos");
+    }
+    
+
+    
   }
   login() {
 
@@ -133,15 +199,14 @@ export class LoginComponent implements OnInit {
     this._authService.signIn(this.formLogin?.value)
         .subscribe(
             (a) => {
-
-                const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
-                this.isLoadingResults =false;
-                this._router.navigateByUrl(redirectURL);
-
+              const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
+              this.isLoadingResults =false;
+              this._router.navigateByUrl(redirectURL);
             },
             (response) => {
               this.isLoadingResults =false;
-                this.formLogin?.enable();
+              this.formLogin?.enable();
+              alert("Correo o contraseña erróneas");
             }
         );
   }
