@@ -28,4 +28,3 @@ export interface EjercicioTratamiento {
     ejercicioDescanso:                string;
     ejercicioObservacion:             string;
 }
-

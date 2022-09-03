@@ -113,7 +113,7 @@
                 </mat-grid-list>
                 <button mat-raised-button matStepperNext color="primary" (click)="guardarConsulta()">Guardar</button>
             </mat-step>
-            <mat-step *ngIf="pacId>0">
+            <mat-step *ngIf="consultaId>0">
                 <ng-template matStepLabel>Tratamiento</ng-template>
                 <div style="margin-bottom: 15px;">
                     <button mat-raised-button color="accent" (click)="agregarFase()"><mat-icon>add</mat-icon>Agregar fase</button>
@@ -141,7 +141,7 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                   </table>
             </mat-step>
-            <mat-step *ngIf="pacId>0">
+            <mat-step *ngIf="consultaId>0">
                 <ng-template matStepLabel>Evolución</ng-template>
                 <div style="margin-bottom: 15px;">
                     <button mat-raised-button color="accent" (click)="agregarEvolucion()"><mat-icon>add</mat-icon>Agregar evolución</button>

@@ -6,9 +6,10 @@ import { Usuario } from '../users/user';
 import { UsuariosService } from '../../servicios/usuarios.service';
 import { Consulta, FotoConsulta } from './consulta';
 import { ConsultasService } from 'src/app/servicios/consulta.service';
-import { TratamientoDia } from '../tratamiento/tratamiento';
+import { FaseTratamiento, TratamientoDia } from '../tratamiento/tratamiento';
 import { TratamientoService } from 'src/app/servicios/tratamiento.service';
 import { Ejercicio } from '../admin-ejercicios/ejercicio';
+import { EjercicioTratamiento } from '../tratamiento/tratamiento';
 import { EjerciciosService } from 'src/app/servicios/ejercicios.service';
 
 @Component({
@@ -32,13 +33,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['fase', 'fechaInicio', 'id'];
   displayedColumnsEvolucion: string[] = ['fecha', 'descripcion', 'id'];
   dataSource = [];
-  dataSourceEvolucion = [
-    {
-      id: 1,
-      fecha: "2022-05-06",
-      descripcion: "Descripción de la evolución de la dolencia"
-    }
-  ]
+  dataSourceEvolucion = []
   consultaId:number =0;
   historiaId:number =0;
   problema = new FormControl('');
@@ -191,6 +186,8 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
       width: '1400px',
       height: '600px',
       data: {
+        id:this.consultaId,
+        numero:this.listaArchivos.length
       }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -237,7 +234,15 @@ export class DialogTratamiento {
   descripcion = new FormControl('');
   detalles = new FormControl('');
   recomendacion = new FormControl('');
-
+  diaSemana:string[] = [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+  ];
   listaDias: TratamientoDia[] = [];
 
 
@@ -249,35 +254,54 @@ export class DialogTratamiento {
     private _httpTratamiento:TratamientoService) {
       this.fechaInicio.valueChanges.subscribe(c=>{
         this.listaDias=[]
-        for(let i=0;i<Number(this.dias);i++){
+        for(let i=0;i<Number(this.dias.value);i++){
+          let add:number =i*(24*60*60*1000);
+          let fech:number = c?.getTime()??0;
           let itemDia:TratamientoDia={
-            tratamientoDiaFecha: new Date(c?.getTime()??0 + i*(24*60*60*1000)),
+            tratamientoDiaFecha: new Date(add + fech ),
             tratamientoDiaId:0,
             tratamientoId:0,
             ejercicios:[],
             fecha:''
           }
-          itemDia.fecha = itemDia.tratamientoDiaFecha.getDay() +'-'+itemDia.tratamientoDiaFecha.getMonth()
-        }
-      });
-      this.dias.valueChanges.subscribe(c=>{
-        this.listaDias=[]
-        for(let i=0;i<Number(c);i++){
-          let itemDia:TratamientoDia={
-            tratamientoDiaFecha: new Date(this.fechaInicio.value?.getTime()??0 + i*(24*60*60*1000)),
-            tratamientoDiaId:0,
-            tratamientoId:0,
-            ejercicios:[],
-            fecha:''
-          }
-          console.log(itemDia);
-          console.log(i);
-          itemDia.fecha = itemDia.tratamientoDiaFecha.getDay() +'-'+itemDia.tratamientoDiaFecha.getMonth()
+          console.log(c?.getDate());
+          console.log(i*(24*60*60*1000));
+          itemDia.fecha = this.diaSemana[itemDia.tratamientoDiaFecha.getDay()]+' '+itemDia.tratamientoDiaFecha.getDate() +'-'+(itemDia.tratamientoDiaFecha.getMonth()+1)
           this.listaDias.push(itemDia);
         }
       });
   }
   onSubmit(data: any) {
+  }
+  guardar(){
+    let itemFase:FaseTratamiento ={
+      consultaId:this.data.id,
+      tratamientoCompleto:false,
+      tratamientoDescripcion:this.descripcion.value??'',
+      tratamientoDias:Number(this.dias.value),
+      tratamientoFase:this.data.numero+1,
+      tratamientoFechaCreacion: new Date(Date.now()),
+      tratamientoFechaInicio: this.fechaInicio.value??new Date(Date.now()),
+      tratamientoRecomendacion: this.recomendacion.value??"",
+      tratamientoObservacion:'',
+      tratamientoId:0
+    }
+    this._httpTratamiento.postCrearTratamiento(itemFase).subscribe(t=>{
+      this.listaDias.forEach(d=>{
+        d.tratamientoId = t.id;
+        this._httpTratamiento.postCrearTratamientoDia(d).subscribe(h=>{
+          
+          d.ejercicios.forEach(k=>{
+            k.tratamientoDiaId = h.id
+            this._httpTratamiento.postCrearEjercicioTratamiento(k).subscribe(
+              e=>{
+                
+              }
+            )
+          });
+        })
+      });
+    });
   }
 
   agregar(id:number) {
@@ -289,7 +313,7 @@ export class DialogTratamiento {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-
+      this.listaDias[this.listaDias.findIndex(c=>c.tratamientoDiaId == id)].ejercicios.push(result);
     });
   }
   onNoClick(): void {
@@ -318,6 +342,20 @@ export class DialogEjercicio {
       });
   }
   onSubmit(data: any) {
+  }
+  guardar(){
+    let item:EjercicioTratamiento = {
+      ejercicioTratamientoRepeticiones:Number(this.repeticiones.value),
+      ejercicioDescanso:this.descanso.value??'',
+      tratamientoDiaId:this.data.diaId,
+      ejercicioObservacion: this.observacion.value??'',
+      ejercicioTratamientoSerie:Number(this.series.value),
+      ejercicioEstado:false,
+      ejercicioNombre:'',
+      ejercicioId:0,
+      ejercicioTratamientoId:0
+    }
+    this.dialogRef.close(item);
   }
 
   onNoClick(): void {
