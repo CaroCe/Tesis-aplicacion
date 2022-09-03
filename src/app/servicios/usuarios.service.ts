@@ -22,6 +22,10 @@ export class UsuariosService {
     return this.http.get<Usuario[]>(this.urlService,headerOauth)
   }
 
+  getUsuarioId(id:number):Observable<Usuario>{
+    return this.http.get<Usuario>(this.urlService+'/'+id,headerOauth)
+  }
+
   postCrearUsuario(datos: Usuario):Observable<any>{
     return this.http.post<any>(this.urlService,datos,headerOauth)
   }

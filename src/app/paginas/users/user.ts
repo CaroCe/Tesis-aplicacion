@@ -12,5 +12,6 @@ export interface Usuario {
     usuarioCorreo:          string;
     usuarioOcupacion:       string;
     usuarioProfesion:       string;
-    fecha:                  string;
+    fecha?:                  string;
+    usuarioEstado?:          boolean;
 }
