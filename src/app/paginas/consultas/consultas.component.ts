@@ -1,10 +1,15 @@
-import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fromEvent, map, Observable, pairwise, startWith, Subscription, switchMap, takeUntil } from 'rxjs';
 import { Usuario } from '../users/user';
 import { UsuariosService } from '../../servicios/usuarios.service';
-import { Consulta } from './consulta';
+import { Consulta, FotoConsulta } from './consulta';
+import { ConsultasService } from 'src/app/servicios/consulta.service';
+import { TratamientoDia } from '../tratamiento/tratamiento';
+import { TratamientoService } from 'src/app/servicios/tratamiento.service';
+import { Ejercicio } from '../admin-ejercicios/ejercicio';
+import { EjerciciosService } from 'src/app/servicios/ejercicios.service';
 
 @Component({
   selector: 'app-consultas',
@@ -23,25 +28,10 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   usuarios: Usuario[] = [];
   filteredOptions: Observable<Usuario[]> | undefined;
   outlineImage = new Image();
+  listaArchivos:string[] =[];
   displayedColumns: string[] = ['fase', 'fechaInicio', 'id'];
   displayedColumnsEvolucion: string[] = ['fecha', 'descripcion', 'id'];
-  dataSource = [{
-    id: 1,
-    fase: "Fase 1",
-    fechaInicio: "2022-04-15"
-  },
-  {
-    id: 2,
-    fase: "Fase 2",
-    fechaInicio: "2022-04-22"
-  },
-  {
-    id: 3,
-    fase: "Fase 3",
-    fechaInicio: "2022-05-01"
-  }
-
-  ];
+  dataSource = [];
   dataSourceEvolucion = [
     {
       id: 1,
@@ -49,7 +39,9 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
       descripcion: "Descripción de la evolución de la dolencia"
     }
   ]
+  consultaId:number =0;
   historiaId:number =0;
+  problema = new FormControl('');
   motivo = new FormControl('');
   descripcion = new FormControl('');
   imagenEsquema: string = "";
@@ -58,7 +50,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   inspeccion = new FormControl('');
   diagnostico = new FormControl('');
 
-  constructor(private _formBuilder: FormBuilder, private dialog: MatDialog, private _httpUsuarioService: UsuariosService) {
+  constructor(private _formBuilder: FormBuilder, private dialog: MatDialog, private _httpUsuarioService: UsuariosService, private _httpConsulta:ConsultasService) {
     this._httpUsuarioService.getUsuarios().subscribe(resp => { this.usuarios = resp });
     this.filteredOptions = this.pacienteId.valueChanges.pipe(
       startWith(''),
@@ -67,6 +59,8 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
         return name ? this._filter(name as string) : this.usuarios.slice();
       }),
     );
+
+
   }
   private _filter(name: string): Usuario[] {
     const filterValue = name.toLowerCase();
@@ -93,7 +87,7 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
     this.historiaId = item.historiaId??0;
   }
   guardarEsquema() {
-    this.canvas.nativeElement.toDataURL();
+    this.imagenEsquema = this.canvas.nativeElement.toDataURL();
   }
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
@@ -149,11 +143,24 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
       diagnostico:this.diagnostico.value??'',
       consultaFecha:new Date(Date.now()),
       consultaImagen: this.imagenEsquema,
-      consultaProblema: '',
+      consultaProblema:this.problema.value??'',
       especialistaId:Number(localStorage.getItem('userId')),
       historiaId:this.historiaId,
     }
-
+    this._httpConsulta.postCrearConsulta(itemConsulta).subscribe(c=>{
+      this.consultaId = c;
+      this.listaArchivos.forEach(cx=>{
+        let item:FotoConsulta ={
+          fotoExaminacionImagen:cx,
+          fotoExaminacionDescripcion:"",
+          consultaId:this.consultaId,
+          fotoExaminacionId:0
+        }
+        this._httpConsulta.postImagen(item).subscribe(h=>{
+          console.log(item);
+        });
+      });
+    });
     
   }
   borrarTodo() {
@@ -193,6 +200,9 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.drawingSubscription.unsubscribe();
   }
+  limpiarImagenes(){
+    this.listaArchivos = [];
+  }
   toBase64(file:File) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -203,10 +213,14 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   }
   uploadFile() {
     this.toBase64(this.fileInput.nativeElement.files[0]).then(
-      c=>{
-        console.log(c);
+      (c:any)=>{
+        this.listaArchivos.push(c);
+        this.fileInput.nativeElement.value = '';
       }
-    );
+    ).catch(e=>{
+        console.log(e);
+    });
+
   }
 
 }
@@ -217,20 +231,61 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
 })
 export class DialogTratamiento {
   mensaje: string = '';
+
+  dias = new FormControl('');
+  fechaInicio = new FormControl(new Date(Date.now()));
+  descripcion = new FormControl('');
+  detalles = new FormControl('');
+  recomendacion = new FormControl('');
+
+  listaDias: TratamientoDia[] = [];
+
+
   constructor(
     public dialogRef: MatDialogRef<DialogTratamiento>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private _httpTratamiento:TratamientoService) {
+      this.fechaInicio.valueChanges.subscribe(c=>{
+        this.listaDias=[]
+        for(let i=0;i<Number(this.dias);i++){
+          let itemDia:TratamientoDia={
+            tratamientoDiaFecha: new Date(c?.getTime()??0 + i*(24*60*60*1000)),
+            tratamientoDiaId:0,
+            tratamientoId:0,
+            ejercicios:[],
+            fecha:''
+          }
+          itemDia.fecha = itemDia.tratamientoDiaFecha.getDay() +'-'+itemDia.tratamientoDiaFecha.getMonth()
+        }
+      });
+      this.dias.valueChanges.subscribe(c=>{
+        this.listaDias=[]
+        for(let i=0;i<Number(c);i++){
+          let itemDia:TratamientoDia={
+            tratamientoDiaFecha: new Date(this.fechaInicio.value?.getTime()??0 + i*(24*60*60*1000)),
+            tratamientoDiaId:0,
+            tratamientoId:0,
+            ejercicios:[],
+            fecha:''
+          }
+          console.log(itemDia);
+          console.log(i);
+          itemDia.fecha = itemDia.tratamientoDiaFecha.getDay() +'-'+itemDia.tratamientoDiaFecha.getMonth()
+          this.listaDias.push(itemDia);
+        }
+      });
   }
   onSubmit(data: any) {
   }
 
-  agregar() {
+  agregar(id:number) {
     const dialogRef = this.dialog.open(DialogEjercicio, {
       width: '450px',
       height: '550px',
       data: {
+        diaId:id
       }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -248,10 +303,19 @@ export class DialogTratamiento {
   styleUrls: ['dialog-ejercicio.css']
 })
 export class DialogEjercicio {
+  repeticiones = new FormControl('');
+  series = new FormControl('');
+  descanso = new FormControl('');
+  observacion = new FormControl('');
+  listaEjercicios:Ejercicio[] =[];
   constructor(
     public dialogRef: MatDialogRef<DialogEjercicio>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private formBuilder: FormBuilder) {
+    private formBuilder: FormBuilder,
+    private _httpEjercicio:EjerciciosService) {
+      _httpEjercicio.getEjercicios().subscribe(c=>{
+        this.listaEjercicios = c;
+      });
   }
   onSubmit(data: any) {
   }

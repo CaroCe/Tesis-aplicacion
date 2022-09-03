@@ -12,3 +12,9 @@ export interface Consulta {
     examinacionInspeccion:  string;
     diagnostico:            string;
 }
+export interface FotoConsulta {
+    fotoExaminacionId:          number;
+    consultaId:                 number;
+    fotoExaminacionImagen:      string;
+    fotoExaminacionDescripcion: string;
+}
