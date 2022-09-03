@@ -11,16 +11,22 @@
                 <h2>Hora fin</h2>
             </mat-grid-tile>
             <mat-grid-tile>
-                <input type="time">
+                <input type="time" formControlName="horarioDesde">
             </mat-grid-tile>
             <mat-grid-tile>
-                <input type="time">
+                <input type="time" formControlName="horarioHsta">
             </mat-grid-tile>
         </mat-grid-list>
             
             
     </mat-card-content>
     <mat-card-actions style="text-align: center;">
-        <button mat-raised-button color="primary" style="width: 80%;">Agregar</button>
+        <div *ngIf="data.id===0; else elseBlock">
+            <button mat-raised-button color="primary" style="width: 80%;" (click)="guardarNuevo()">Agregar</button>
+        </div>
+        <ng-template #elseBlock>
+            <button mat-raised-button color="primary" style="width: 80%;" (click)="guardarEdicion()">Guardar</button>
+        </ng-template>
+        
     </mat-card-actions>
 </mat-card>
