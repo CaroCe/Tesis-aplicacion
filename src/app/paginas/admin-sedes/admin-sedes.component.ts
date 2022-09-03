@@ -11,15 +11,7 @@ import { SedesService } from '../../servicios/sedes.service';
   styleUrls: ['./admin-sedes.component.css']
 })
 export class AdminSedesComponent implements OnInit {
-  listaSedes:Sede[] =[/*{
-    id:1,
-    nombre:'Sede norte',
-    ubicacion:'César Baquero Oe16-104 Lote 20 entre Escalinata 1 y calle Pedernales. Referencias: Diagonal a la Lubricadora Mundi Auto',
-    telefono:'022670280',
-    horarioInicio:'08:00AM',
-    horarioFin:'05:00PM',
-    estado:true
-  }*/];
+  listaSedes:Sede[] =[];
   sedeForm: FormGroup;
 
   displayedColumns:string[] =['nombre','ubicacion','telefono','horarioInicio','horarioFin','estado']
@@ -53,7 +45,6 @@ export class AdminSedesComponent implements OnInit {
 
   cargarTabla(){
     this._httpSedeService.getSedes().subscribe(resp => {
-      console.log(resp)
       this.listaSedes=resp
     })
   }
