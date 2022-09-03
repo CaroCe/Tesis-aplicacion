@@ -12,6 +12,11 @@ export interface Usuario {
     usuarioCorreo:          string;
     usuarioOcupacion:       string;
     usuarioProfesion:       string;
-    fecha?:                  string;
-    usuarioEstado?:          boolean;
+    historiaId?:             number;
+}
+export interface FiltroUsuarios {
+    nombre: string;
+    cedula: string;
+    sede:   number;
+    rol:    number;
 }

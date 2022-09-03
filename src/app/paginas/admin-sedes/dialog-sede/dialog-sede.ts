@@ -22,8 +22,9 @@ import { SedesService } from '../../../servicios/sedes.service';
           sedeNombre: new FormControl(''),
           sedeTelefono: new FormControl(''),
           sedeDireccion: new FormControl(''),
-          horaInicio: new FormControl('00:00'),
-          horaFin: new FormControl('00:00')
+          horaInicio: new FormControl(''),
+          horaFin: new FormControl(''),
+          estado: new FormControl(false)
         })
 
     }
@@ -37,8 +38,9 @@ import { SedesService } from '../../../servicios/sedes.service';
         sedeNombre: this.sedeForm.value.sedeNombre,
         sedeTelefono: this.sedeForm.value.sedeTelefono,
         sedeDireccion: this.sedeForm.value.sedeDireccion,
-        horarioInicio: this.sedeForm.value.horaInicio,
-        horarioFin: this.sedeForm.value.horaFin
+        sedeHoraDesde: this.sedeForm.value.horaInicio,
+        sedeHoraHasta: this.sedeForm.value.horaFin,
+        sedeEstado: this.sedeForm.value.estado
       }
       this._httpSedeService.postCrearSede(sede).subscribe(resp =>{
         this.respuesta.emit()
