@@ -3,21 +3,22 @@
         <mat-card-title>Agregar horario</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-grid-list cols="2" rowHeight="50">
-            <mat-grid-tile>
-                <h2>Hora inicio</h2>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <h2>Hora fin</h2>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <input type="time" formControlName="horarioDesde">
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <input type="time" formControlName="horarioHsta">
-            </mat-grid-tile>
-        </mat-grid-list>
-            
+        <form action="" [formGroup]="horarioForm">
+            <mat-grid-list cols="2" rowHeight="50">
+                <mat-grid-tile>
+                    <h2>Hora inicio</h2>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <h2>Hora fin</h2>
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <input type="time" formControlName="horarioDesde">
+                </mat-grid-tile>
+                <mat-grid-tile>
+                    <input type="time" formControlName="horarioHasta">
+                </mat-grid-tile>
+            </mat-grid-list>
+        </form>
             
     </mat-card-content>
     <mat-card-actions style="text-align: center;">

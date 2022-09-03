@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { UsuariosService } from 'src/app/servicios/usuarios.service';
+import { Usuario } from '../users/user';
 
 @Component({
   selector: 'app-seguimiento',
@@ -12,6 +14,7 @@ export class SeguimientoComponent implements OnInit {
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
+  listaUsuarios:Usuario[]=[];
   displayedColumns: string[] = ['fecha', 'problema', 'diagnostico', 'acciones'];
   dataSource = [
     {
@@ -21,7 +24,11 @@ export class SeguimientoComponent implements OnInit {
       id:1
     }
   ];
-  constructor(private dialog:MatDialog) { }
+  constructor(private dialog:MatDialog, private _httpUsuariosService: UsuariosService) { 
+    _httpUsuariosService.getUsuarios().subscribe(resp=>{
+      this.listaUsuarios=resp;
+    })
+  }
 
   ngOnInit(): void {
   }

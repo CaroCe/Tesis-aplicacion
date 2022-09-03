@@ -1,22 +1,20 @@
 export interface HorarioEspecialista {
-    horarioEspecialistaId:     number;
-    horarioId:                 number;
-    horarioTrabajoId:          number;
-    usuarioId:                 number;
-    horarioEspecialistaEstado: boolean;
-    horario:                   HorarioDia;
-    horarioTrabajo:            HorarioTrabajo;
+    horarioEspecialistaId?:      number;
+    especialistaId:             number;
+    horarioEspecialistaEstado:  boolean;
+    horarioDia?:                HorarioDia[];
 }
 
 export interface HorarioDia {
-    horarioId:           number;
-    horarioNombre:       string;
-    horarioEspecialista: HorarioEspecialista[];
+    horarioId:              number;
+    horarioNombre:          string;
+    horarioEspecialistaId:  number;
+    horarioTrabajos?:        HorarioTrabajo[];
 }
 
 export interface HorarioTrabajo {
-    horarioTrabajoId:    number;
-    horarioTrabajoDesde: string;
-    horarioTrabajoHasta: string;
-    horarioEspecialista: string[];
+    horarioTrabajoId:      number;
+    horarioId:             number;
+    horarioTrabajoDesde:    string;
+    horarioTrabajoHasta:    string;
 }
