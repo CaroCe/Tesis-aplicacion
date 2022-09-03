@@ -13,6 +13,8 @@ export interface Usuario {
     usuarioOcupacion:       string;
     usuarioProfesion:       string;
     historiaId?:             number;
+    usuarioEstado:           boolean;
+    fecha:                   string;
 }
 export interface FiltroUsuarios {
     nombre: string;

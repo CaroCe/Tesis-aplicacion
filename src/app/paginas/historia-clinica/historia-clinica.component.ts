@@ -196,7 +196,8 @@ export class DialogHistoriaClinica {
       rolId:this.usuarioForm.value.rolId,
       sedeId:this.usuarioForm.value.sedeId,
       lateralidadId:this.usuarioForm.value.lateralidadId,
-      usuarioEstado:true
+      usuarioEstado:true,
+      fecha:''
     }
     this._httpUsuarioService.putUsuario(datos,this.usuarioForm.value.id).subscribe(resp=>{
       stepper.next();
