@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Ejercicio } from '../paginas/admin-ejercicios/ejercicio';
 import { Observable } from 'rxjs';
-import { FaseTratamiento, TratamientoDia } from '../paginas/tratamiento/tratamiento';
+import { EjercicioTratamiento, FaseTratamiento, TratamientoDia } from '../paginas/tratamiento/tratamiento';
 
 const headerOauth = {
   headers: new  HttpHeaders()
@@ -31,6 +31,12 @@ export class TratamientoService {
   }
   postCrearTratamiento(datos: FaseTratamiento):Observable<any>{
     return this.http.post<any>(this.urlService,datos,headerOauth)
+  }
+  postCrearTratamientoDia(datos: TratamientoDia):Observable<any>{
+    return this.http.post<any>(environment.apiUrl+"api/TratamientosDias",datos,headerOauth);
+  }
+  postCrearEjercicioTratamiento(datos: EjercicioTratamiento):Observable<any>{
+    return this.http.post<any>(environment.apiUrl+"api/EjercicioTratamientos",datos,headerOauth)
   }
   putTratamiento(datos: FaseTratamiento,id: number):Observable<any>{
     return this.http.put(this.urlService+'/'+id,datos,headerOauth); 
