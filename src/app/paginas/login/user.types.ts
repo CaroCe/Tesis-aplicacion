@@ -13,4 +13,5 @@ export interface EntRegistro {
     domicilio?:       string;
     email?:           string;
     password?:        string;
+    rolId:            number;
 }

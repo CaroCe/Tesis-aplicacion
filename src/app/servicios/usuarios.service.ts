@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-import { Usuario } from '../paginas/users/user';
+import { FiltroUsuarios, Usuario } from '../paginas/users/user';
 
 const headerOauth = {
   headers: new  HttpHeaders()
@@ -21,7 +21,9 @@ export class UsuariosService {
   getUsuarios():Observable<Usuario[]>{
     return this.http.get<Usuario[]>(this.urlService,headerOauth)
   }
-
+  getUsuariosFiltro(filtro:FiltroUsuarios):Observable<Usuario[]>{
+    return this.http.post<Usuario[]>(this.urlService+"/Filtro",filtro,headerOauth)
+  }
   postCrearUsuario(datos: Usuario):Observable<any>{
     return this.http.post<any>(this.urlService,datos,headerOauth)
   }

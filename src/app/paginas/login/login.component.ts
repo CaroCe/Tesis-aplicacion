@@ -150,7 +150,8 @@ export class LoginComponent implements OnInit {
       telefono:this.formReg.value.telefono?.toString(),
       fechaNacimiento: this.formReg.value.fechaNacimiento??undefined,
       password:this.formReg.value.password?.toString(),
-      id:0
+      id:0,
+      rolId:3
     }
     if(itemRegistro.nombre != ''
     && itemRegistro.email != ''

@@ -11,8 +11,9 @@
           <form action="" [formGroup]="filtroForm">
             <mat-grid-list cols="2" rowHeight="75">
               <mat-grid-tile colspan="2">
-                <mat-radio-group aria-label="Select an option" style="width: 100%;"  formControlName="rolId">
-                  <mat-radio-button *ngFor="let rol of listaRoles" [value]="rol.rolId">{{rol.rolNombre}} </mat-radio-button>
+                <mat-radio-group aria-label="Select an option" style="width: 100%;" formControlName="rolId">
+                  <mat-radio-button *ngFor="let rol of listaRoles" [value]="rol.rolId">{{rol.rolNombre}}
+                  </mat-radio-button>
                 </mat-radio-group>
               </mat-grid-tile>
               <mat-grid-tile colspan="2">
@@ -30,19 +31,18 @@
               <mat-grid-tile>
                 <mat-form-field appearance="outline">
                   <mat-label>Sede</mat-label>
-                  <mat-select [formControl]="sedeFiltro" >
-                    
+                  <mat-select formControlName="sedeId">
                     <mat-option value="0" disabled="true" selected>Seleccione una sede</mat-option>
                     <mat-option *ngFor="let sede of listaSedes" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
-                  
                   </mat-select>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile>
-                <button mat-raised-button color="primary" style="height: 35px" (click)="">Buscar</button>
+                <button mat-raised-button color="primary" style="height: 35px" (click)="buscar()">Buscar</button>
               </mat-grid-tile>
               <mat-grid-tile>
-                <button mat-raised-button color="accent" style="height: 35px" (click)="nuevoUsuario()">Crear nuevo</button>
+                <button mat-raised-button color="accent" style="height: 35px" (click)="nuevoUsuario()">Crear
+                  nuevo</button>
               </mat-grid-tile>
             </mat-grid-list>
           </form>
@@ -66,8 +66,14 @@
                 <td mat-cell *matCellDef="let element"> {{element.usuarioTelefono}} </td>
               </ng-container>
 
+              <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef> Estado </th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-icon *ngIf="element.usuarioEstado">check_circle</mat-icon>
+                  <mat-icon *ngIf="!element.usuarioEstado">cancel</mat-icon>
+                </td>
+              </ng-container>
 
-      
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editarUsuario(row)"></tr>
             </table>
@@ -124,7 +130,7 @@
                   <mat-label>Profesión</mat-label>
                   <input matInput formControlName="profesion">
                 </mat-form-field>
-                
+
               </mat-grid-tile>
               <mat-grid-tile>
                 <mat-form-field appearance="outline">
@@ -152,11 +158,16 @@
                   </mat-select>
                 </mat-form-field>
               </mat-grid-tile>
+              <mat-grid-tile>
+                <mat-slide-toggle class="example-margin" color="primary" formControlName="estado">
+                  Estado
+                </mat-slide-toggle>
+              </mat-grid-tile>
               <mat-grid-tile colspan="2">
                 <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
               </mat-grid-tile>
             </form>
-            
+
           </mat-grid-list>
         </div>
       </mat-grid-tile>

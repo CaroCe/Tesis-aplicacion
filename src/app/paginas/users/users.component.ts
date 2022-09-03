@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogGeneral } from '../dialog-general/dialog-general';
-import { Usuario } from './user';
+import { FiltroUsuarios, Usuario } from './user';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UsuariosService } from '../../servicios/usuarios.service';
 import { RolesService } from '../../servicios/roles.service';
@@ -23,7 +23,7 @@ export class UsersComponent implements OnInit{
   usuarioId: number = 0;
   usuarioForm: FormGroup;
   filtroForm: FormGroup;
-  displayedColumns: string[] = ['name', 'date', 'phone'];
+  displayedColumns: string[] = ['name', 'date', 'phone','estado'];
   listaUsuarios : Usuario[] =[];
   listaRoles: Rol[] = [];
   listaSedes: Sede[] = [];
@@ -36,8 +36,8 @@ export class UsersComponent implements OnInit{
     this.filtroForm = fb.group({
       nombre: new FormControl(''),
       cedula: new FormControl(''),
-      sede: this.sedeFiltro,
-      estado: this.estadoUsuario
+      sedeId: new FormControl(0),
+      rolId:new FormControl(0)
     })
     this.usuarioForm= this.fb.group({
       nombre : new FormControl(''),
@@ -50,6 +50,7 @@ export class UsersComponent implements OnInit{
       email: new FormControl(''),
       rolId : this.rolUsuario,
       sedeId : this.sedeUsuario,
+      estado : new FormControl(false)
     })
     _httpRolService.getRoles().subscribe(resp=>{
       this.listaRoles=resp;
@@ -61,6 +62,25 @@ export class UsersComponent implements OnInit{
 
   ngOnInit(): void {
     this.cargarTabla();
+  }
+  buscar(){
+    let filtro:FiltroUsuarios ={
+      nombre:this.filtroForm.value.nombre,
+      cedula:this.filtroForm.value.cedula,
+      sede:this.filtroForm.value.sedeId,
+      rol:this.filtroForm.value.rolId
+    }
+
+    this._httpUsuarioService.getUsuariosFiltro(filtro).subscribe(
+      c=>{
+        for(let i=0;i<c.length;i++){
+          let pipe = new DatePipe('en-US');
+          c[i].fecha = pipe.transform(c[i].usuarioFechaNacimiento, 'yyyy-MM-dd')?.toString()??'';
+        }
+        this.listaUsuarios =c;
+      }
+    )
+
   }
   cargarTabla(){
     this._httpUsuarioService.getUsuarios().subscribe(resp => {
@@ -93,7 +113,8 @@ export class UsersComponent implements OnInit{
       profesion: item.usuarioProfesion,
       email: item.usuarioCorreo,
       rolId: item.rolId,
-      sedeId: item.sedeId
+      sedeId: item.sedeId,
+      estado: item.usuarioEstado
     });
 
   }
@@ -123,7 +144,8 @@ export class UsersComponent implements OnInit{
       sedeId: this.usuarioForm.value.sedeId,
       fecha: "",
       lateralidadId:this.usuarioForm.value.lateralidadId,
-      usuarioCorreo:this.usuarioForm.value.email
+      usuarioCorreo:this.usuarioForm.value.email,
+      usuarioEstado:this.usuarioForm.value.estado
     }
     this._httpUsuarioService.postCrearUsuario(usuario).subscribe(resp=> {
       const dialogRef = this.dialog.open(DialogGeneral, {
@@ -152,7 +174,8 @@ export class UsersComponent implements OnInit{
       rolId: this.usuarioForm.value.rolId,
       sedeId: this.usuarioForm.value.sedeId,
       fecha: "",
-      lateralidadId:this.usuarioForm.value.lateralidadId
+      lateralidadId:this.usuarioForm.value.lateralidadId,
+      usuarioEstado:this.usuarioForm.value.estado
     }
     this._httpUsuarioService.putUsuario(usuario,this.usuarioId).subscribe(resp=> {
       const dialogRef = this.dialog.open(DialogGeneral, {
