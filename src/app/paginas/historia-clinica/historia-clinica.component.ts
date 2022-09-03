@@ -178,7 +178,8 @@ export class DialogHistoriaClinica {
       profesion:datos.usuarioProfesion,
       email:datos.usuarioCorreo,
       rolId:datos.rolId,
-      sedeId:datos.sedeId
+      sedeId:datos.sedeId,
+      lateralidadId: datos.lateralidadId
     })
   }
   guardarDatosUsuario(stepper: MatStepper){

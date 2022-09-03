@@ -8,12 +8,7 @@
                 <mat-form-field appearance="outline" style="width: 100%;">
                     <mat-label>Paciente</mat-label>
                     <mat-select>
-                      <mat-option value="0">
-                        Nancy Simbaña
-                      </mat-option>
-                      <mat-option value="0">
-                        Roberto Villacres
-                      </mat-option>
+                      <mat-option *ngFor="let item of listaUsuarios" [value]="item.usuarioId">{{item.usuarioNombre}}</mat-option>
                     </mat-select>
                   </mat-form-field>
             </mat-grid-tile>
