@@ -3,7 +3,7 @@ export interface Sede{
     sedeNombre:         string;
     sedeDireccion:      string;
     sedeTelefono:           string;
-    horarioInicio?:      string;
-    horarioFin?:         string;
-    estado?:             boolean;
+    sedeHoraDesde?:      string;
+    sedeHoraHasta?:         string;
+    sedeEstado?:             boolean;
 }

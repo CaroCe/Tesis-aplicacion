@@ -19,7 +19,6 @@ export class SedesService {
   constructor(private http: HttpClient) { }
 
   getSedes():Observable<any>{
-
     return this.http.get<any>(this.urlService,headerOauth)
   }
 
