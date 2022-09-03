@@ -1,4 +1,4 @@
-<mat-card>
+sx<mat-card>
     <mat-card-header>
         <mat-card-title>Historias Clínicas</mat-card-title>
     </mat-card-header>
@@ -19,9 +19,9 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Paciente</mat-label>
                     <mat-select>
-                        <mat-option value="0">Todas</mat-option>
-                        <mat-option value="1">Nancy Simbaña</mat-option>
-                        <mat-option value="2">Norte</mat-option>
+                        <mat-radio-button value="0">Todos</mat-radio-button>
+                        <mat-option *ngFor="let item of usuarios" [value]="item.usuarioId">{{item.usuarioNombre}}</mat-option>
+                        
                     </mat-select>
                 </mat-form-field>
             </mat-grid-tile>
@@ -37,7 +37,7 @@
             <mat-grid-tile colspan="3">
             </mat-grid-tile>
             <mat-grid-tile>
-                <button mat-raised-button color="primary">Nuevo</button>
+                <button mat-raised-button color="primary" (click)="nuevaHistoria()">Nuevo</button>
             </mat-grid-tile>
         </mat-grid-list>
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">

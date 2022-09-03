@@ -22,8 +22,8 @@ import { SedesService } from '../../../servicios/sedes.service';
           sedeNombre: new FormControl(''),
           sedeTelefono: new FormControl(''),
           sedeDireccion: new FormControl(''),
-          horaInicio: new FormControl(''),
-          horaFin: new FormControl('')
+          horaInicio: new FormControl('00:00'),
+          horaFin: new FormControl('00:00')
         })
 
     }

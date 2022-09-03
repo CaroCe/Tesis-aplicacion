@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HorarioEspecialista } from './horario-especialista';
+import { HorarioEspecialista, HorarioDia } from './horario-especialista';
+import { HorarioService } from '../../servicios/horario.service';
 
 @Component({
   selector: 'app-horario-especialista',
@@ -9,15 +10,16 @@ import { HorarioEspecialista } from './horario-especialista';
   styleUrls: ['./horario-especialista.component.css']
 })
 export class HorarioEspecialistaComponent implements OnInit {
-  horarioLunes:HorarioEspecialista[]=[
-    {
+  horarioDias: HorarioDia[]=[];
+  horarioLunes:HorarioDia[]=[
+   /* {
       id:1,
       diaId:1,
       valor:'8:00am-3:00pm'
-    }
+    }*/
   ];
-  horarioMartes:HorarioEspecialista[]=[
-    {
+  horarioMartes:HorarioDia[]=[
+   /* {
       id:1,
       diaId:1,
       valor:'7:30am-11:00am'
@@ -31,60 +33,26 @@ export class HorarioEspecialistaComponent implements OnInit {
       id:1,
       diaId:1,
       valor:'2:30am-5:00pm'
-    },
+    },*/
   ];
-  horarioMiercoles:HorarioEspecialista[]=[
-    {
-      id:1,
-      diaId:1,
-      valor:'7:00am-12:30pm'
-    },
-    {
-      id:1,
-      diaId:1,
-      valor:'1:30pm-4:30pm'
-    },
-  ];
-  horarioJueves:HorarioEspecialista[]=[
-    {
-      id:1,
-      diaId:1,
-      valor:'7:00am-12:30pm'
-    },
-    {
-      id:1,
-      diaId:1,
-      valor:'1:30pm-4:30pm'
-    },
-  ];
-  horarioViernes:HorarioEspecialista[]=[
-    {
-      id:1,
-      diaId:1,
-      valor:'7:00am-12:30pm'
-    },
-    {
-      id:1,
-      diaId:1,
-      valor:'1:30pm-4:30pm'
-    },
-  ];
-  horarioSabado:HorarioEspecialista[]=[
-    {
-      id:1,
-      diaId:1,
-      valor:'9:00am-12:30pm'
-    }
-  ];
-  horarioDomingo:HorarioEspecialista[]=[
-    {
-      id:1,
-      diaId:1,
-      valor:'9:00am-12:30pm'
-    }
-  ];
-  constructor(public dialog: MatDialog) { }
 
+  constructor(public dialog: MatDialog, private _htppHorarioService:HorarioService) { }
+
+  cargarDatos(){
+    this._htppHorarioService.getHorariosDias().subscribe(resp=>{
+      this.horarioDias=resp
+    })
+  }
+  agregarHorario(diaId:number){
+    const dialogRef = this.dialog.open(DialogHorario, {
+      width: '400px',
+      data: {id:diaId
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+     
+    }); 
+  }
   agregarUsuario(){
     const dialogRef = this.dialog.open(DialogHorario, {
       width: '400px',
@@ -111,9 +79,20 @@ export class DialogHorario{
   id:any;
   tipo:any;
   hora:any;
+  horarioForm: FormGroup;
+
   constructor(public dialogRef: MatDialogRef<DialogHorario>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder, public dialog: MatDialog){
+    private fb: FormBuilder, public dialog: MatDialog,private _htppHorarioService:HorarioService){
+      this.horarioForm = fb.group({
+        horarioDesde:   new FormControl('00:00'),
+        horarioHasta:  new FormControl('00:00'),
+      })
+  }
 
-    }
+  guardarNuevo(){
+
+  }
+
+  guardarEdicion(){}
 }
