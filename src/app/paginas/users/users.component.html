@@ -34,12 +34,12 @@
                     
                     <mat-option value="0" disabled="true" selected>Seleccione una sede</mat-option>
                     <mat-option *ngFor="let sede of listaSedes" [value]="sede.sedeId">{{sede.sedeNombre}} </mat-option>
-                  <!--  <mat-error *ngIf="usuarioForm.hasError('required')" ></mat-error>-->
+                  
                   </mat-select>
                 </mat-form-field>
               </mat-grid-tile>
               <mat-grid-tile>
-                <button mat-raised-button color="primary" style="height: 35px">Buscar</button>
+                <button mat-raised-button color="primary" style="height: 35px" (click)="">Buscar</button>
               </mat-grid-tile>
               <mat-grid-tile>
                 <button mat-raised-button color="accent" style="height: 35px" (click)="nuevoUsuario()">Crear nuevo</button>
