@@ -5,6 +5,25 @@
     </mat-card-header>
     <mat-card-content>
         <mat-grid-list cols="7" rowHeight="400">
+            <mat-grid-tile *ngFor="let dia of horarioDias">
+                <div style="height: 100%;width: 100%;">
+                    <mat-list>
+                        <mat-list-item>
+                            <h2>{{dia.horarioNombre}}</h2>
+                        </mat-list-item>
+                        <mat-list-item *ngFor="let item of dia.horarioEspecialista" style="height: 70px;margin-bottom: 5px;">
+                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
+                                {{item.horarioTrabajo.horarioTrabajoDesde}}
+                                <br>
+                                {{item.horarioTrabajo.horarioTrabajoHasta.split('-')[1]}}
+                            </button>
+                        </mat-list-item>
+                        <mat-list-item>
+                            <button mat-raised-button color="primary" (click)="agregarHorario(dia.horarioId)">Agregar</button>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+            </mat-grid-tile>
             <mat-grid-tile>
                 <div style="height: 100%;width: 100%;">
                     <mat-list>
@@ -13,13 +32,13 @@
                         </mat-list-item>
                         <mat-list-item *ngFor="let item of horarioLunes" style="height: 70px;margin-bottom: 5px;">
                             <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
+                                {{item.horarioNombre.split('-')[0]}}
                                 <br>
-                                {{item.valor.split('-')[1]}}
+                                {{item.horarioNombre.split('-')[1]}}
                             </button>
                         </mat-list-item>
                         <mat-list-item>
-                            <button mat-raised-button color="primary" (click)="agregarUsuario()">Agregar</button>
+                            <button mat-raised-button color="primary" (click)="agregarHorario(0)">Agregar</button>
                         </mat-list-item>
                     </mat-list>
                 </div>
@@ -32,9 +51,9 @@
                         </mat-list-item>
                         <mat-list-item *ngFor="let item of horarioMartes" style="height: 70px;margin-bottom: 5px;">
                             <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
+                                {{item.horarioNombre.split('-')[0]}}
                                 <br>
-                                {{item.valor.split('-')[1]}}
+                                {{item.horarioNombre.split('-')[1]}}
                             </button>
                         </mat-list-item>
                         <mat-list-item>
@@ -43,101 +62,11 @@
                     </mat-list>
                 </div>
             </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;width: 100%;">
-                    <mat-list>
-                        <mat-list-item>
-                            <h2>Miércoles</h2>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let item of horarioMiercoles" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
-                                <br>
-                                {{item.valor.split('-')[1]}}
-                            </button>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <button mat-raised-button color="primary">Agregar</button>
-                        </mat-list-item>
-                    </mat-list>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;width: 100%;">
-                    <mat-list>
-                        <mat-list-item>
-                            <h2>Jueves</h2>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let item of horarioJueves" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
-                                <br>
-                                {{item.valor.split('-')[1]}}
-                            </button>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <button mat-raised-button color="primary">Agregar</button>
-                        </mat-list-item>
-                    </mat-list>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;width: 100%;">
-                    <mat-list>
-                        <mat-list-item>
-                            <h2>Viernes</h2>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let item of horarioViernes" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
-                                <br>
-                                {{item.valor.split('-')[1]}}
-                            </button>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <button mat-raised-button color="primary">Agregar</button>
-                        </mat-list-item>
-                    </mat-list>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;width: 100%;">
-                    <mat-list>
-                        <mat-list-item>
-                            <h2>Sábado</h2>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let item of horarioSabado" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
-                                <br>
-                                {{item.valor.split('-')[1]}}
-                            </button>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <button mat-raised-button color="primary">Agregar</button>
-                        </mat-list-item>
-                    </mat-list>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile>
-                <div style="height: 100%;width: 100%;">
-                    <mat-list>
-                        <mat-list-item>
-                            <h2>Domingo</h2>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let item of horarioDomingo" style="height: 70px;margin-bottom: 5px;">
-                            <button mat-raised-button color="accent" style="width: 100%;height: 100%;">
-                                {{item.valor.split('-')[0]}}
-                                <br>
-                                {{item.valor.split('-')[1]}}
-                            </button>
-                        </mat-list-item>
-                        <mat-list-item>
-                            <button mat-raised-button color="primary">Agregar</button>
-                        </mat-list-item>
-                    </mat-list>
-                </div>
-            </mat-grid-tile>
+            
+            
+            
+            
+            
         </mat-grid-list>
     </mat-card-content>
 </mat-card>
