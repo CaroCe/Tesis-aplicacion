@@ -24,7 +24,7 @@ import { Sede } from '../admin-sedes/sede';
 export class HistoriaClinicaComponent {
   myControl = new FormControl<string | Usuario>('');;
   usuarios: Usuario[]=[];
-  filteredOptions: Observable<Usuario[]>
+  filteredOptions: Observable<Usuario[]>;
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),

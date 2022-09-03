@@ -1,19 +1,35 @@
 <mat-card>
     <mat-card-header>
         <mat-card-title>Nueva Consulta</mat-card-title>
+        <mat-form-field appearance="outline">
+            <mat-label>Nombre completo</mat-label>
+            <input matInput type="nombre" [formControl]="pacienteId" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option" (click)="crearConulta(option)">
+                {{option.usuarioNombre}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
     </mat-card-header>
     <mat-card-content>
         <mat-stepper #stepper>
             <mat-step>
                 <ng-template matStepLabel>Problema de Salud</ng-template>
                 <mat-grid-list cols="2" rowHeight="90">
-                    <mat-grid-tile>
+                    <mat-grid-tile  *ngIf="pacId>0" colspan="2">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Problema</mat-label>
+                            <input matInput type="text">
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile  *ngIf="pacId>0">
                         <mat-form-field appearance="outline">
                             <mat-label>Motivo</mat-label>
                             <input matInput type="text">
                         </mat-form-field>
                     </mat-grid-tile>
-                    <mat-grid-tile>
+                    <mat-grid-tile *ngIf="pacId>0">
                         <mat-form-field appearance="outline">
                             <mat-label>Descripción</mat-label>
                             <textarea matInput type="text"></textarea>
@@ -28,11 +44,11 @@
                                         </canvas>
                                     </div>
                                 </mat-grid-tile>
-                                <mat-grid-tile>
+                                <mat-grid-tile *ngIf="pacId>0">
                                     <button mat-raised-button color="warn" style="width: 90%;" (click)="borrarTodo()">Borrar</button>
                                 </mat-grid-tile>
-                                <mat-grid-tile>
-                                    <button mat-raised-button color="primary" style="width: 90%;">
+                                <mat-grid-tile *ngIf="pacId>0">
+                                    <button mat-raised-button color="primary" style="width: 90%;" (click)="guardarEsquema()">
                                         <mat-icon>save</mat-icon>
                                         Guardar
                                     </button>
@@ -40,13 +56,14 @@
                             </mat-grid-list>
                         </div>
                     </mat-grid-tile>
-                    <mat-grid-tile colspan="2">
+                    <mat-grid-tile colspan="2" *ngIf="pacId>0">
                         <mat-form-field appearance="outline">
                             <mat-label>Descripción del dolor</mat-label>
                             <textarea matInput type="text"></textarea>
                         </mat-form-field>
                     </mat-grid-tile>
                 </mat-grid-list>
+                <button mat-button matStepperNext  *ngIf="pacId>0">Siguiente</button>
             </mat-step>
             <mat-step>
                 <ng-template matStepLabel>Examinación y Diagnostico</ng-template>
@@ -65,12 +82,14 @@
                     </mat-grid-tile>
                     <mat-grid-tile rowspan="4">
                         <div style="height: 100%;width: 100%;">
-                            <mat-grid-list cols="1" rowHeight="90">
+                            <mat-grid-list cols="2" rowHeight="90">
                                 <mat-grid-tile>
-                                    <input style="width: 10%; height: 50%;" type="file" accept="image/png, image/jpeg" #fileInput/>
+                                    <input type="file" accept="image/png, image/jpeg" #fileInput/>
+                                </mat-grid-tile>
+                                <mat-grid-tile>
                                     <button mat-raised-button (click)="uploadFile();" color="accent">Subir</button>
                                 </mat-grid-tile>
-                                <mat-grid-tile rowspan="3">
+                                <mat-grid-tile rowspan="3" colspan="2">
                                     <div class="scroll">
                                         <mat-grid-list cols="2" rowHeight="200px">
                                             <mat-grid-tile>
@@ -98,6 +117,7 @@
                         </mat-form-field>
                     </mat-grid-tile>
                 </mat-grid-list>
+                <button mat-button matStepperNext color="primary" (click)="guardarConsulta()">Guardar</button>
             </mat-step>
             <mat-step>
                 <ng-template matStepLabel>Tratamiento</ng-template>
@@ -155,9 +175,7 @@
                   </table>
             </mat-step>
         </mat-stepper>
-        <div style="text-align: center;">
-            <button mat-raised-button color="primary" style="width: 200px;">Guardar consulta</button>
-        </div>
+        
     </mat-card-content>
     
 </mat-card>

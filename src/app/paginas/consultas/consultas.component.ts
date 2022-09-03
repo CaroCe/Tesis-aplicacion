@@ -1,7 +1,10 @@
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { fromEvent, pairwise, Subscription, switchMap, takeUntil } from 'rxjs';
+import { fromEvent, map, Observable, pairwise, startWith, Subscription, switchMap, takeUntil } from 'rxjs';
+import { Usuario } from '../users/user';
+import { UsuariosService } from '../../servicios/usuarios.service';
+import { Consulta } from './consulta';
 
 @Component({
   selector: 'app-consultas',
@@ -15,36 +18,64 @@ export class ConsultasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   cx!: CanvasRenderingContext2D;
   drawingSubscription!: Subscription;
+  pacId: Number = 0;
+  pacienteId = new FormControl<string | Usuario>('');;
+  usuarios: Usuario[] = [];
+  filteredOptions: Observable<Usuario[]> | undefined;
   outlineImage = new Image();
-  displayedColumns: string[] = ['fase', 'fechaInicio','id'];
-  displayedColumnsEvolucion: string[] = ['fecha', 'descripcion','id'];
+  displayedColumns: string[] = ['fase', 'fechaInicio', 'id'];
+  displayedColumnsEvolucion: string[] = ['fecha', 'descripcion', 'id'];
   dataSource = [{
-    id:1,
-    fase:"Fase 1",
-    fechaInicio:"2022-04-15"
+    id: 1,
+    fase: "Fase 1",
+    fechaInicio: "2022-04-15"
   },
   {
-    id:2,
-    fase:"Fase 2",
-    fechaInicio:"2022-04-22"
+    id: 2,
+    fase: "Fase 2",
+    fechaInicio: "2022-04-22"
   },
   {
-    id:3,
-    fase:"Fase 3",
-    fechaInicio:"2022-05-01"
+    id: 3,
+    fase: "Fase 3",
+    fechaInicio: "2022-05-01"
   }
 
-];
-dataSourceEvolucion =[
-  {
-    id:1,
-    fecha:"2022-05-06",
-    descripcion:"Descripción de la evolución de la dolencia"
-  }
-]
-  constructor(private _formBuilder: FormBuilder,private dialog:MatDialog) { }
+  ];
+  dataSourceEvolucion = [
+    {
+      id: 1,
+      fecha: "2022-05-06",
+      descripcion: "Descripción de la evolución de la dolencia"
+    }
+  ]
+  historiaId:number =0;
+  motivo = new FormControl('');
+  descripcion = new FormControl('');
+  imagenEsquema: string = "";
+  descripcionDolor = new FormControl('');
+  observacion = new FormControl('');
+  inspeccion = new FormControl('');
+  diagnostico = new FormControl('');
 
-  agregarEvolucion(){
+  constructor(private _formBuilder: FormBuilder, private dialog: MatDialog, private _httpUsuarioService: UsuariosService) {
+    this._httpUsuarioService.getUsuarios().subscribe(resp => { this.usuarios = resp });
+    this.filteredOptions = this.pacienteId.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const name = typeof value === 'string' ? value : value?.usuarioNombre;
+        return name ? this._filter(name as string) : this.usuarios.slice();
+      }),
+    );
+  }
+  private _filter(name: string): Usuario[] {
+    const filterValue = name.toLowerCase();
+    return this.usuarios.filter(option => option.usuarioNombre.toLowerCase().includes(filterValue));
+  }
+  displayFn(user: Usuario): string {
+    return user && user.usuarioNombre ? user.usuarioNombre : '';
+  }
+  agregarEvolucion() {
     const dialogRef = this.dialog.open(DialogEvolucion, {
       width: '400px',
       height: '550px',
@@ -52,10 +83,17 @@ dataSourceEvolucion =[
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-     
-    }); 
+
+    });
   }
   ngOnInit(): void {
+  }
+  crearConulta(item: Usuario) {
+    this.pacId = item.usuarioId;
+    this.historiaId = item.historiaId??0;
+  }
+  guardarEsquema() {
+    this.canvas.nativeElement.toDataURL();
   }
   ngAfterViewInit() {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
@@ -66,7 +104,7 @@ dataSourceEvolucion =[
     this.outlineImage.height = 450;
     this.outlineImage.width = 520;
     setTimeout(() => {
-      this.cx.drawImage(this.outlineImage,0, 0);
+      this.cx.drawImage(this.outlineImage, 0, 0);
     }, 500);
     this.cx.lineWidth = 11;
     this.cx.lineCap = 'round';
@@ -79,7 +117,7 @@ dataSourceEvolucion =[
         switchMap(e => {
           return fromEvent(canvasEl, 'mousemove').pipe(
             takeUntil(fromEvent(canvasEl, 'mouseup')),
-             takeUntil(fromEvent(canvasEl, 'mouseleave')),
+            takeUntil(fromEvent(canvasEl, 'mouseleave')),
             pairwise()
           );
         })
@@ -96,22 +134,38 @@ dataSourceEvolucion =[
           x: res[1].clientX - rect.left,
           y: res[1].clientY - rect.top
         };
-        
+
         this.drawOnCanvas(prevPos, currentPos);
       });
-      
-  }
 
-  borrarTodo(){
+  }
+  guardarConsulta(){
+    let itemConsulta:Consulta ={
+      consultaMotivo:this.motivo.value??'',
+      consultaDescripcion:this.descripcion.value??'',
+      consultaDescripImagen:this.descripcionDolor.value??'',
+      examinacionObservacion:this.observacion.value??'',
+      examinacionInspeccion:this.inspeccion.value??'',
+      diagnostico:this.diagnostico.value??'',
+      consultaFecha:new Date(Date.now()),
+      consultaImagen: this.imagenEsquema,
+      consultaProblema: '',
+      especialistaId:Number(localStorage.getItem('userId')),
+      historiaId:this.historiaId,
+    }
+
+    
+  }
+  borrarTodo() {
     this.cx.clearRect(0, 0, 520, 450);
-    this.cx.drawImage(this.outlineImage,0, 0);
+    this.cx.drawImage(this.outlineImage, 0, 0);
   }
 
   drawOnCanvas(
     prevPos: { x: number; y: number },
     currentPos: { x: number; y: number }
   ) {
-    
+
     if (!this.cx) {
       return;
     }
@@ -125,7 +179,7 @@ dataSourceEvolucion =[
       this.cx.stroke();
     }
   }
-  agregarFase(){
+  agregarFase() {
     const dialogRef = this.dialog.open(DialogTratamiento, {
       width: '1400px',
       height: '600px',
@@ -133,16 +187,26 @@ dataSourceEvolucion =[
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-     
-    }); 
+
+    });
   }
   ngOnDestroy() {
     this.drawingSubscription.unsubscribe();
   }
-  uploadFile() {  
-    let formData = new FormData();  
-    formData.append('imagen', this.fileInput.nativeElement.files[0])  
-    this.fileInput.nativeElement.value = '';
+  toBase64(file:File) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+  uploadFile() {
+    this.toBase64(this.fileInput.nativeElement.files[0]).then(
+      c=>{
+        console.log(c);
+      }
+    );
   }
 
 }
@@ -152,17 +216,17 @@ dataSourceEvolucion =[
   styleUrls: ['dialog-tratamiento.css']
 })
 export class DialogTratamiento {
-  mensaje:string = '';
+  mensaje: string = '';
   constructor(
     public dialogRef: MatDialogRef<DialogTratamiento>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
-    private dialog:MatDialog) {
+    private dialog: MatDialog) {
   }
   onSubmit(data: any) {
   }
 
-  agregar(){
+  agregar() {
     const dialogRef = this.dialog.open(DialogEjercicio, {
       width: '450px',
       height: '550px',
@@ -170,8 +234,8 @@ export class DialogTratamiento {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-     
-    }); 
+
+    });
   }
   onNoClick(): void {
     this.dialogRef.close();
@@ -183,7 +247,7 @@ export class DialogTratamiento {
   templateUrl: 'dialog-ejercicio.html',
   styleUrls: ['dialog-ejercicio.css']
 })
-export class DialogEjercicio{
+export class DialogEjercicio {
   constructor(
     public dialogRef: MatDialogRef<DialogEjercicio>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -202,8 +266,8 @@ export class DialogEjercicio{
   templateUrl: 'dialog-evolucion.html',
   styleUrls: ['dialog-evolucion.css']
 })
-export class DialogEvolucion{
-  
+export class DialogEvolucion {
+
   @ViewChild('fileInput') fileInput!: ElementRef;
   constructor(
     public dialogRef: MatDialogRef<DialogEvolucion>,
@@ -212,9 +276,11 @@ export class DialogEvolucion{
   }
   onSubmit(data: any) {
   }
-  uploadFile() {  
-    let formData = new FormData();  
-    formData.append('imagen', this.fileInput.nativeElement.files[0])  
+  uploadFile() {
+    console.log(this.fileInput.nativeElement);
+    let formData = new FormData();
+    formData.append('imagen', this.fileInput.nativeElement.files[0]);
+
     this.fileInput.nativeElement.value = '';
   }
   onNoClick(): void {
