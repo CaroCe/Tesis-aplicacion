@@ -12,8 +12,6 @@ export interface Usuario {
     usuarioCorreo:          string;
     usuarioOcupacion:       string;
     usuarioProfesion:       string;
-    usuarioEstado:          boolean;
-    fecha:                  string;
     historiaId?:             number;
 }
 export interface FiltroUsuarios {

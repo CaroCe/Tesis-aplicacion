@@ -21,9 +21,17 @@ export class UsuariosService {
   getUsuarios():Observable<Usuario[]>{
     return this.http.get<Usuario[]>(this.urlService,headerOauth)
   }
+
+
+  getUsuarioId(id:number):Observable<Usuario>{
+    return this.http.get<Usuario>(this.urlService+'/'+id,headerOauth)
+  }
+
+
   getUsuariosFiltro(filtro:FiltroUsuarios):Observable<Usuario[]>{
     return this.http.post<Usuario[]>(this.urlService+"/Filtro",filtro,headerOauth)
   }
+
   postCrearUsuario(datos: Usuario):Observable<any>{
     return this.http.post<any>(this.urlService,datos,headerOauth)
   }
